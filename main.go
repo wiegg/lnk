@@ -25,7 +25,7 @@ func main() {
 		handler.HandleShortUrlRedirect(c)
 	})
 
-	store.InitializeStore()
+	store.InitializeStore(nil)
 
 	err := r.Run(":8080")
 	if err != nil {

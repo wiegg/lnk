@@ -18,7 +18,12 @@ var (
 
 const CacheDuration = 6 * time.Hour
 
-func InitializeStore() *StorageService {
+func InitializeStore(store *redis.Client) *StorageService {
+	if store != nil {
+		storeService.redis = store
+		return storeService
+	}
+
 	client := redis.NewClient(&redis.Options{
 		Addr: "host.docker.internal:6379",
 		Password: "",
