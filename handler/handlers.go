@@ -3,7 +3,9 @@ package handler
 import (
 	"net/http"
 
+	jwtmiddleware "github.com/auth0/go-jwt-middleware"
 	"github.com/gin-gonic/gin"
+	"wie.gg/lnk/middleware"
 	"wie.gg/lnk/shortener"
 	"wie.gg/lnk/store"
 )
@@ -11,13 +13,20 @@ import (
 // Request model definition
 type UrlCreationRequest struct {
 	LongUrl string `json:"long_url" binding:"required"`
-	UserId string `json:"user_id" binding:"required"`
+	UserId  string `json:"user_id" binding:"required"`
 }
 
 func CreateShortUrl(c *gin.Context) {
+	claims := c.Request.Context().Value(jwtmiddleware.ContextKey{}).(*middleware.CustomClaims)
+	if !claims.HasScope("create:link") {
+		c.JSON(http.StatusForbidden, gin.H{
+			"message": "Insufficient permissions",
+		})
+	}
+
 	var req UrlCreationRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{ "error": err.Error() })
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 
@@ -27,7 +36,7 @@ func CreateShortUrl(c *gin.Context) {
 	host := "http://localhost:8080/"
 	c.JSON(200, gin.H{
 		"message": "URL successfully created",
-		"url": host + shortUrl,
+		"url":     host + shortUrl,
 	})
 }
 
