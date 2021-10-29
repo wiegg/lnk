@@ -1,14 +1,47 @@
 package handler
 
 import (
+	"log"
 	"net/http"
 
 	jwtmiddleware "github.com/auth0/go-jwt-middleware"
+	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
+	"github.com/joho/godotenv"
 	"wie.gg/lnk/middleware"
 	"wie.gg/lnk/shortener"
 	"wie.gg/lnk/store"
 )
+
+func SetupRouter(env *string) *gin.Engine {
+	if env != nil {
+		if err := godotenv.Load(*env); err != nil {
+			log.Fatalf("error loading the .env file: %v", err)
+		}
+	} else {
+		if err := godotenv.Load(); err != nil {
+			log.Fatalf("error loading the .env file: %v", err)
+		}
+	}
+
+	r := gin.Default()
+
+	r.Use(cors.New(cors.Config{
+		AllowOrigins:     []string{"*"},
+		AllowCredentials: true,
+		AllowHeaders:     []string{"Authorization"},
+	}))
+
+	r.POST("/", middleware.EnsureValidToken(), func(c *gin.Context) {
+		CreateShortUrl(c)
+	})
+
+	r.GET("/:shortUrl", func(c *gin.Context) {
+		HandleShortUrlRedirect(c)
+	})
+
+	return r
+}
 
 // Request model definition
 type UrlCreationRequest struct {
