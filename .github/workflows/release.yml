@@ -1,4 +1,4 @@
-name: Go
+name: Release Go binaries
 
 on: 
   push:
@@ -10,6 +10,9 @@ on:
 jobs:
 
   build:
+    defaults:
+      run:
+        working-directory: server
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
