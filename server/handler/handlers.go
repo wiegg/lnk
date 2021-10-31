@@ -19,7 +19,7 @@ func SetupRouter(env *string) *gin.Engine {
 			log.Fatalf("error loading the .env file: %v", err)
 		}
 	} else {
-		if err := godotenv.Load(); err != nil {
+		if err := godotenv.Load(".env", ".env.developement"); err != nil {
 			log.Fatalf("error loading the .env file: %v", err)
 		}
 	}
@@ -50,6 +50,12 @@ type UrlCreationRequest struct {
 }
 
 func CreateShortUrl(c *gin.Context) {
+	t := c.Request.Context().Value(jwtmiddleware.ContextKey{})
+
+	if t == nil {
+		return
+	}
+
 	claims := c.Request.Context().Value(jwtmiddleware.ContextKey{}).(*middleware.CustomClaims)
 	if !claims.HasScope("create:link") {
 		c.JSON(http.StatusForbidden, gin.H{

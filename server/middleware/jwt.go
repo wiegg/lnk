@@ -20,8 +20,13 @@ const signatureAlgorithm = "RS256"
 
 var _ jwtgo.CustomClaims = &CustomClaims{}
 
+type User struct {
+	Id string `json:"user_id"`
+}
+
 type CustomClaims struct {
 	Scope string `json:"scope"`
+	User  User   `json:"user"`
 	jwt.StandardClaims
 }
 
