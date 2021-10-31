@@ -33,6 +33,6 @@ jobs:
       
     - uses: ncipollo/release-action@v1
       with:
-        artifacts: "lnk_standalone"
+        artifacts: "**/*/lnk_standalone"
         body: Build for linux amd64 for version ${{ env.RELEASE_VERSION }}
         token: ${{ secrets.GITHUB_TOKEN }}
