@@ -1,9 +1,7 @@
 name: Release Go binaries
 
 on: 
-  push:
-    branches:
-    - "main"
+  create:
     tags:
     - 'v*'
 
