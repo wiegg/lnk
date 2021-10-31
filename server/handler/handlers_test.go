@@ -33,6 +33,17 @@ func TestGet(t *testing.T) {
 	assert.Equal(t, 302, w.Code)
 }
 
+func TestHealth(t *testing.T) {
+	router := SetupRouter(&_env)
+
+	w := httptest.NewRecorder()
+	req, _ := http.NewRequest("GET", "/health", nil)
+
+	router.ServeHTTP(w, req)
+
+	assert.Equal(t, 200, w.Code)
+}
+
 func TestAuthNotProvided(t *testing.T) {
 	router := SetupRouter(&_env)
 

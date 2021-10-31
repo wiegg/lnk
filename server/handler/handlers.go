@@ -32,13 +32,11 @@ func SetupRouter(env *string) *gin.Engine {
 		AllowHeaders:     []string{"Authorization"},
 	}))
 
-	r.POST("/", middleware.EnsureValidToken(), func(c *gin.Context) {
-		CreateShortUrl(c)
-	})
+	r.POST("/", middleware.EnsureValidToken(), CreateShortUrl)
 
-	r.GET("/:shortUrl", func(c *gin.Context) {
-		HandleShortUrlRedirect(c)
-	})
+	r.GET("/health", HandleHealth)
+
+	r.GET("/:shortUrl", HandleShortUrlRedirect)
 
 	return r
 }
@@ -84,4 +82,8 @@ func HandleShortUrlRedirect(c *gin.Context) {
 	initalUrl := store.RetrieveOriginalUrl(shortUrl)
 
 	c.Redirect(302, initalUrl)
+}
+
+func HandleHealth(c *gin.Context) {
+	c.Status(200)
 }
