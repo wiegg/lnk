@@ -2,6 +2,7 @@ package store
 
 import (
 	"context"
+	"os"
 	"time"
 
 	"github.com/go-redis/redis/v8"
@@ -13,7 +14,7 @@ type StorageService struct {
 
 var (
 	storeService = &StorageService{}
-	ctx = context.Background()
+	ctx          = context.Background()
 )
 
 const CacheDuration = 6 * time.Hour
@@ -24,10 +25,15 @@ func InitializeStore(store *redis.Client) *StorageService {
 		return storeService
 	}
 
+	addr, isAddrPresent := os.LookupEnv("REDIS_HOST")
+	if !isAddrPresent {
+		addr = "localhost:6379"
+	}
+
 	client := redis.NewClient(&redis.Options{
-		Addr: "host.docker.internal:6379",
+		Addr:     addr,
 		Password: "",
-		DB: 0,
+		DB:       0,
 	})
 
 	_, err := client.Ping(ctx).Result()

@@ -16,11 +16,11 @@ import (
 func SetupRouter(env *string) *gin.Engine {
 	if env != nil {
 		if err := godotenv.Load(*env); err != nil {
-			log.Fatalf("error loading the .env file: %v", err)
+			log.Printf("error loading the .env file: %v", err)
 		}
 	} else {
 		if err := godotenv.Load(".env", ".env.developement"); err != nil {
-			log.Fatalf("error loading the .env file: %v", err)
+			log.Printf("error loading the .env file: %v", err)
 		}
 	}
 
@@ -43,8 +43,7 @@ func SetupRouter(env *string) *gin.Engine {
 
 // Request model definition
 type UrlCreationRequest struct {
-	LongUrl string `json:"long_url" binding:"required"`
-	UserId  string `json:"user_id" binding:"required"`
+	LongUrl string `json:"url" binding:"required"`
 }
 
 func CreateShortUrl(c *gin.Context) {
@@ -67,13 +66,12 @@ func CreateShortUrl(c *gin.Context) {
 		return
 	}
 
-	shortUrl := shortener.GenerateShortLink(req.LongUrl, req.UserId)
-	store.SaveUrlMapping(shortUrl, req.LongUrl, req.UserId)
+	shortUrl := shortener.GenerateShortLink(req.LongUrl, claims.User.Id)
+	store.SaveUrlMapping(shortUrl, req.LongUrl, claims.User.Id)
 
-	host := "http://localhost:8080/"
 	c.JSON(200, gin.H{
 		"message": "URL successfully created",
-		"url":     host + shortUrl,
+		"url":     "/" + shortUrl,
 	})
 }
 

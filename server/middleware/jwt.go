@@ -26,7 +26,7 @@ type User struct {
 
 type CustomClaims struct {
 	Scope string `json:"scope"`
-	User  User   `json:"user"`
+	User  User   `json:"https://tourex.wie.gg/user"`
 	jwt.StandardClaims
 }
 
