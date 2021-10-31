@@ -10,6 +10,9 @@ on:
 
 jobs:
   build:
+    defaults:
+      run:
+        working-directory: cli
     runs-on: ubuntu-latest
     permissions:
       contents: write
