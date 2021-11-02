@@ -38,7 +38,7 @@ func InitializeStore(store *redis.Client) *StorageService {
 
 	_, err := client.Ping(ctx).Result()
 	if err != nil {
-		panic("autschie")
+		panic("Could not ping redis server")
 	}
 
 	storeService.redis = client
